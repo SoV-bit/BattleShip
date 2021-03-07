@@ -215,6 +215,9 @@ class AI(Player):
 
     def ask(self):
         s = "" #Для оповещения о скором уничтожении корабля
+        for i in self.enemy_board.busy:#
+            if i not in self.smart:
+                self.smart.append(i)
         if self.enemy_board.get_memory == 0:  # Уничтожили?Стираем
             self.near = []
         d=self.check(self.near)
@@ -236,17 +239,19 @@ class User(Player):
             print("Ваш Ход ")
             print("Чтобы отобразить свою строку напишите show")  # Уже как то не до красоты извините (
             try:
-                x = int(input("По x координате: "))
+                x = input("По x координате: ")
                 if x == "show":  # Отображение своей доски, не очень интересно на неё все время смотреть
                     print("Ваша доска")
                     print(self.self_board)
                     continue
                 else:
-                    y = int(input("По y координате: "))
+                    x=int(x)
+                    y = input("По y координате: ")
                     if y == "showmethemoney":
-                        print("Доска вражины! Пора уничтожать!")
+                        print("Мы теперь знаем где враг! Пора уничтожать!")
                         self.enemy_board.hid = not self.enemy_board.hid  # Небольшое шулерство, Тригер
                         continue
+                    y=int(y)
             except ValueError:
                 print(self.enemy_board)
                 print("!!!Нужно ввести целое!!!")
@@ -357,6 +362,7 @@ class Game:
 
     def loop(self):
         self.pl.self_board.battle_front = self.pl.enemy_board.battle_front.copy()
+        self.ai.enemy_board.busy = self.ai.enemy_board.busy.copy()
         # Костыль без понятия как еще можно почему то ссылается на одну переменную, даже если сеты поставить в Board
         num = 0
         while True:
