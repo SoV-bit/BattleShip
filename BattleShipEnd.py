@@ -180,16 +180,13 @@ class Player:
 
 
 class AI(Player):
-    def ask(self):
-        s = "" #Для оповещения о скором уничтожении корабля
-        if self.enemy_board.get_memory == 0:  # Уничтожили?Стираем
-            self.near = []
+    def check(self,msh): # Сделал отдельно функцию проверки
         while True: #Ищет и уничтожает корабли
-            if self.near:
-                if len(self.near) >= 2:
-                    if self.near[0].x == self.near[1].x:
+            if msh:
+                if len(msh) >= 2:
+                    if msh[0].x == msh[1].x:
 
-                        ms = self.near[randint(0, len(self.near) - 1)]
+                        ms = msh[randint(0, len(self.near) - 1)]
                         d = Dot(ms.x, ms.y + 1 - randint(0, 2))
                         if d in self.smart or self.self_board.out(d): #Кривой подход хотел добавить класс но не хватило времени додумать
                             continue
@@ -197,15 +194,15 @@ class AI(Player):
                             break
                     else:
 
-                        ms = self.near[randint(0, len(self.near) - 1)]
+                        ms = msh[randint(0, len(self.near) - 1)]
                         d = Dot(ms.x + 1 - randint(0, 2), ms.y)
                         if d in self.smart or self.self_board.out(d):
                             continue
                         else:
                             break
-                elif len(self.near) == 1:
+                elif len(msh) == 1:
 
-                    ms = self.near[0]
+                    ms = msh[0]
                     d = Dot(ms.x + 1 - randint(0, 2), ms.y + 1 - randint(0, 2))
                     if d in self.smart or self.self_board.out(d):
                         continue
@@ -214,6 +211,13 @@ class AI(Player):
             else:
                 d = Dot(randint(0, self.self_board.size - 1), randint(0, self.self_board.size - 1)) #Не знаем куда стрелять
                 break
+        return d
+
+    def ask(self):
+        s = "" #Для оповещения о скором уничтожении корабля
+        if self.enemy_board.get_memory == 0:  # Уничтожили?Стираем
+            self.near = []
+        d=self.check(self.near)
         for ship in self.enemy_board.ships:
             if d in ship.dots:
                 if d not in self.near:
@@ -352,7 +356,7 @@ class Game:
         num = 0
         while True:
             print("Доска вражины")
-            print(self.ai.enemy_board)
+            print(self.pl.enemy_board) #Исправил
             if num % 2 == 0:
                 print("Ваш флот:  ", self.pl.self_board.battle_front)
                 print("Флот Врага:", self.ai.self_board.battle_front)
