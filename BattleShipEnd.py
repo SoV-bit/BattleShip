@@ -236,17 +236,19 @@ class User(Player):
             print("Ваш Ход ")
             print("Чтобы отобразить свою строку напишите show")  # Уже как то не до красоты извините (
             try:
-                x = input("По x координате: ")
-                y = input("По y координате: ")
-                x, y = int(x), int(y)
-            except ValueError:
-                if x == "show": #Отображение своей доски, не очень интересно на неё все время смотреть
+                x = int(input("По x координате: "))
+                if x == "show":  # Отображение своей доски, не очень интересно на неё все время смотреть
                     print("Ваша доска")
                     print(self.self_board)
-                elif y == "showmethemoney":
-                    print("Доска вражины! Пора уничтожать!")
-                    self.enemy_board.hid = not self.enemy_board.hid #Небольшое шулерство, Тригер
-                    print(self.enemy_board)
+                    continue
+                else:
+                    y = int(input("По y координате: "))
+                    if y == "showmethemoney":
+                        print("Доска вражины! Пора уничтожать!")
+                        self.enemy_board.hid = not self.enemy_board.hid  # Небольшое шулерство, Тригер
+                        continue
+            except ValueError:
+                print(self.enemy_board)
                 print("!!!Нужно ввести целое!!!")
                 continue
             return Dot(x - 1, y - 1)
@@ -306,8 +308,11 @@ class Game:
                     print("!!!Такой корабль не поместится на поле!!!")
                 else:
                     amount = int(input("Сколько кораблей?"))
-                    tsize -= deck * amount
-                    temp_front += ([deck] * amount)
+                    if tsize - deck * amount >=0:
+                        tsize -= deck * amount
+                        temp_front += ([deck] * amount)
+                    else:
+                        print("!!!Вы превысили ограничение поля на ",abs(tsize - deck * amount),"!!!")
             except ValueError as e:
                 print("!!!Нужно ввести целое!!!")
                 continue
